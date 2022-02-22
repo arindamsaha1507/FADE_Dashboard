@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}
+FACS
+{% endblock %}
+
+{% block heading %}
+FACS: Flu and Coronavirus Simulator
+{% endblock %}
+
+{%block content %}
+
+<div class="container">
+
+    <div class="row">
+
+        <div class="col">
+
+            <div class="card">
+                <div class="card-body">
+                    <h5>What is FACS?</h5>
+                    The Modelling and Simulation Group at the Brunel University London has developed FACS: Flu And Coronavirus Simulator, a tool for agent based simulation of spread of infectious diseases such as flu and the novel coronavirus. 
+                    In order to run a simulation for a region, FACS requires certain data related to the region, such as, the locations of houses and other amenities in the region, its age-based demographics, and the government restrictions applied there. 
+                    Using these input data, FACS makes predictions regarding the future number of cases, number of hospitalisations etc.      
+                    
+                    <br>
+                    <br>
+                    <br>
+                    
+                    <img src="/static/countries.png" class="img-fluid mt-2" alt="Input files for FACS">
+                    
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col">
+
+            <div class="card">
+                <div class="card-body">
+                    <h5>Need for an integrated dashboard</h5>
+                    The data required by FACS is in a very specific format (generally as .csv and .yml files). 
+                    While much of the data is generally publicly available, it is almost never in the required format. 
+                    Moreover, the data is generally collected from multiple sources. 
+                    Therefore, without an integrated Graphical User Interface (GUI), running a simulation with FACS becomes cumbersome and prone to errors. 
+                    Even after the run, the results need to be plotted and manually visualised for further analysis.
+                    In order to address these problems, we present FADE, a dashboard that presents a GUI for running FACS. 
+                    FADE allows the users to set-up and run FACS simulations within a few clicks. 
+                    It also plots the summary of the results in a streamlined fashion.
+
+                    <img src="/static/minimal.png" class="img-fluid mt-3" alt="Input files for FACS">
+
+                </div>
+            </div>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+{% endblock %}
