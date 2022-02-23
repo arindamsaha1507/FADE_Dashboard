@@ -19,12 +19,11 @@ def lithuania():
 
     if request.method == 'POST':
 
-        for i in range(int(request.form.get('reps'))):
-            cmd = 'bash facs_script.sh klaipeda ' + request.form.get('sim_length') + ' ' + request.form.get('starting_infections') + ' ' + request.form.get('reps')
-            th = threading.Thread(target=simulate, args=(cmd,))
-            # th.start()
-
         if request.form['but'] == 'but1':
+            for i in range(int(request.form.get('reps'))):
+                cmd = 'bash facs_script.sh klaipeda ' + request.form.get('sim_length') + ' ' + request.form.get('starting_infections') + ' ' + request.form.get('reps')
+                th = threading.Thread(target=simulate, args=(cmd,))
+                # th.start()
             msg1 = 'Simulation submitted!'
         if request.form['but'] == 'but2':
             spread_time = int(request.form.get('spread_time'))
