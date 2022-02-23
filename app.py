@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
 from plot_functions import plot_map, plot_demo, plot_measures, plot_results_overall, plot_results_hospitals, plot_aggregated_data, plot_spread
-import subprocess
+from submit_simulation import simulate
+import threading
 import random
 
 app = Flask(__name__)
@@ -17,10 +18,12 @@ def lithuania():
     msg2 = 'Showing spread of infections on day ' + str(spread_time)
 
     if request.method == 'POST':
-        # for i in range(int(request.form.get('reps'))):
-        #     cmd = 'bash facs_script.sh klaipeda ' + request.form.get('sim_length') + ' ' + request.form.get('starting_infections') + ' ' + request.form.get('reps')
-        #     subprocess.call(cmd, shell=True)
-        # msg = request.form
+
+        for i in range(int(request.form.get('reps'))):
+            cmd = 'bash facs_script.sh klaipeda ' + request.form.get('sim_length') + ' ' + request.form.get('starting_infections') + ' ' + request.form.get('reps')
+            th = threading.Thread(target=simulate, args=(cmd,))
+            # th.start()
+
         if request.form['but'] == 'but1':
             msg1 = 'Simulation submitted!'
         if request.form['but'] == 'but2':
