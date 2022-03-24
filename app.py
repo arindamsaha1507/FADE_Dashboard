@@ -1,8 +1,9 @@
 from flask import Flask, render_template, request
-from plot_functions import plot_map, plot_demo, plot_measures, plot_results_overall, plot_results_hospitals, plot_aggregated_data, plot_spread
+from plot_functions import plot_map, plot_demo, plot_measures, plot_results_overall, plot_results_hospitals, plot_aggregated_data, plot_spread, count_sim_results
 from submit_simulation import simulate
 import threading
 import random
+import time
 
 app = Flask(__name__)
 
@@ -23,7 +24,7 @@ def lithuania():
             for i in range(int(request.form.get('reps'))):
                 cmd = 'bash facs_script.sh klaipeda ' + request.form.get('sim_length') + ' ' + request.form.get('starting_infections') + ' ' + request.form.get('reps')
                 th = threading.Thread(target=simulate, args=(cmd,))
-                # th.start()
+                th.start()
             msg1 = 'Simulation submitted!'
         if request.form['but'] == 'but2':
             spread_time = int(request.form.get('spread_time'))
@@ -36,6 +37,9 @@ def lithuania():
     latest_cases = plot_results_overall(filename='Data/lithuania/klaipeda/output/klaipeda-latest.csv')
     latest_hospitalisations = plot_results_hospitals(filename='Data/lithuania/klaipeda/output/klaipeda-latest.csv')
 
+    cc = count_sim_results(borough='klaipeda', scenario='extend', res_dir='Data/lithuania/klaipeda/output/')
+    msg3 = f'Showing plots for {cc} runs'
+
     all_cases = plot_aggregated_data(borough='klaipeda', observable=['susceptible', 'exposed', 'infectious', 'recovered', 'dead'], scenario=['extend'], res_dir='Data/lithuania/klaipeda/output/')
     all_hospitalisations = plot_aggregated_data(borough='klaipeda', observable=['num hospitalisations today', 'hospital bed occupancy', 'cum num hospitalisations today'], scenario=['extend'], res_dir='Data/lithuania/klaipeda/output/')
 
@@ -44,6 +48,7 @@ def lithuania():
     return render_template('country.html', 
     message1=msg1, 
     message2=msg2, 
+    message3=msg3,
     country='Lithuania', 
     region='Klaipeda', 
     maps=region_map, 

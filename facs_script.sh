@@ -1,5 +1,5 @@
-facs_dir='/home/arindam/Dropbox/Brunel/FACS/facs'
-cur_dir='/home/arindam/Dropbox/Dashboard'
+facs_dir='facs'
+cur_dir='.'
 
 country='lithuania'
 
@@ -22,6 +22,8 @@ cp $cur_dir/Data/$country/$location/input/$location$suffix $facs_dir/covid_data/
 cd $facs_dir
 
 $cmd
+
+cd ..
 # $cmd | tee log.txt
 
 datestamp=`date '+%F_%H:%M:%S'` 

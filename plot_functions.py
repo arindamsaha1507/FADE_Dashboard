@@ -95,6 +95,12 @@ def plot_results_hospitals(filename):
 
     return fig
 
+
+def count_sim_results(borough, scenario, res_dir):
+    file_list = os.listdir(res_dir)
+    borough_files = [res_dir + x for x in file_list if borough in x.split('-') and scenario in x.split('-') and 'latest.csv' not in x.split('-')]
+    return len(borough_files)
+
 def compile_data(borough, observable, scenario, res_dir):
 
     file_list = os.listdir(res_dir)
@@ -105,7 +111,7 @@ def compile_data(borough, observable, scenario, res_dir):
         ll[i].name = 'Trial_' + str(i+1)
     dd = pd.concat(ll, axis=1)
 
-    assert not dd.isnull().values.any()
+    # assert not dd.isnull().values.any()
 
     dd['mean'] = dd.mean(axis=1)
     dd['std'] = dd.std(axis=1)
