@@ -1,2 +1,2 @@
-*.pyc
-facs_env
+__pycache__
+Data
