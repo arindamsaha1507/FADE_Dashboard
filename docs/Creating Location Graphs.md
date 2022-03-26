@@ -13,7 +13,7 @@ We illustrate the next steps using the English county of Cumbria as an example. 
 
     ```shell
     wget http://polygons.openstreetmap.fr/get_poly.py?id=88065&params=0
-    osmconvert england.osm.pbf -B=cumbria.poly -o=cumbria
+    osmconvert england.osm.pbf -B=cumbria.poly -o=cumbria.osm
     python graph_extract.py cumbria 498083
     ```
 
