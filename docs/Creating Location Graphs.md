@@ -8,7 +8,7 @@ sudo apt install osmctools
 
 We illustrate the next steps using the English county of Cumbria as an example. The OSM map of **England**, in which **Cumbria** is located, was downloaded from [GeoFabrik](http://download.geofabrik.de/europe/great-britain/england-latest.osm.pbf) and stored as `england.osm.pbf`. Thereafter, the OSM id of the relation corresponding to Cumbria was identified as `88065` from [Open Street Maps](https://www.openstreetmap.org/relation/88065). The population of the county was taken to be `498083` in accordance with [Data Commons](https://datacommons.org/tools/timeline#&place=nuts/UKD1&statsVar=Count_Person). With these pre-requisites, the end-user must take the following steps to prepare the location graph for **Cumbria**.
 
-1. Clone the graph extractor code into the directory where the country map is located.
+1. Clone the [graph extractor code](../auxiliary_code/Location_Graph_Generator) into the directory where the country map is located.
 2. Run the following commands in the terminal from within the directory.
 
     ```shell

@@ -1,3 +1,5 @@
 .idea/
 .ipynb_checkpoints/
 __pycache__/
+fade_env/
+facs/
