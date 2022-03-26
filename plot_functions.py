@@ -44,26 +44,6 @@ def plot_demo(fname, region):
     demographics = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return demographics
 
-def plot_measures(fname):
-    df = pd.read_csv(fname)
-    for ii in range(len(df)):
-        for kk in list(df.columns):
-            if df.loc[ii][kk] == '-':
-                if ii == 0:
-                    df.loc[ii][kk] = 0
-                else:
-                    df.loc[ii][kk] = df.loc[ii-1][kk]
-    df = df.set_index('date')
-    cols = list(df.columns)[4:]
-    print(cols, flush=True)
-
-
-    fig = px.line(df[cols], labels={'date': 'Date', 'value':'Value'})
-
-    mm = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-
-    return mm
-
 def plot_measures_yml(fname):
     with open(fname, 'r') as ff:
         dd = yaml.safe_load(ff)

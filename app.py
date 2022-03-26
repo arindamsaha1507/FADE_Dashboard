@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-from plot_functions import plot_map, plot_demo, plot_measures, plot_results_overall, \
+from plot_functions import plot_map, plot_demo, plot_results_overall, \
     plot_results_hospitals, plot_aggregated_data, plot_spread, count_sim_results, plot_measures_yml
 from submit_simulation import simulate
 import threading
@@ -33,7 +33,7 @@ def lithuania():
 
     region_map = plot_map(fname='Data/lithuania/klaipeda/input/klaipeda_buildings.csv', zoom=8.0)
     demographics = plot_demo(fname='Data/lithuania/klaipeda/input/age-distr.csv', region='Klaipeda')
-    measures = plot_measures(fname='Data/lithuania/klaipeda/input/measures_test.csv')
+    measures = plot_measures_yml(fname='Data/lithuania/klaipeda/input/measures_lithuania.yml')
 
     latest_cases = plot_results_overall(filename='Data/lithuania/klaipeda/output/klaipeda-latest.csv')
     latest_hospitalisations = plot_results_hospitals(filename='Data/lithuania/klaipeda/output/klaipeda-latest.csv')
