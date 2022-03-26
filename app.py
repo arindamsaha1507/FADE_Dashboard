@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
-from plot_functions import plot_map, plot_demo, plot_measures, plot_results_overall, plot_results_hospitals, plot_aggregated_data, plot_spread, count_sim_results
+from plot_functions import plot_map, plot_demo, plot_measures, plot_results_overall, \
+    plot_results_hospitals, plot_aggregated_data, plot_spread, count_sim_results, plot_measures_yml
 from submit_simulation import simulate
 import threading
 import random
@@ -81,16 +82,16 @@ def turkey():
 
     region_map = plot_map(fname='Data/turkey/cankaya/input/cankaya_buildings.csv', zoom=8.0)
     demographics = plot_demo(fname='Data/turkey/cankaya/input/age-distr.csv', region='Cankaya')
-    measures = plot_measures(fname='Data/turkey/cankaya/input/measures_test.csv')
+    measures = plot_measures_yml(fname='Data/turkey/cankaya/input/measures_turkey.yml')
 
-    #latest_cases = plot_results_overall(filename='Data/turkey/cankaya/output/cankaya-latest.csv')
-    #latest_hospitalisations = plot_results_hospitals(filename='Data/turkey/cankaya/output/cankaya-latest.csv')
+    latest_cases = plot_results_overall(filename='Data/turkey/cankaya/output/cankaya-latest.csv')
+    latest_hospitalisations = plot_results_hospitals(filename='Data/turkey/cankaya/output/cankaya-latest.csv')
 
     cc = count_sim_results(borough='klaipeda', scenario='extend', res_dir='Data/turkey/cankaya/output/')
     msg3 = f'Showing plots for {cc} runs'
 
-    all_cases = plot_aggregated_data(borough='cankaya', observable=['susceptible', 'exposed', 'infectious', 'recovered', 'dead'], scenario=['extend'], res_dir='Data/lithuania/klaipeda/output/')
-    all_hospitalisations = plot_aggregated_data(borough='cankaya', observable=['num hospitalisations today', 'hospital bed occupancy', 'cum num hospitalisations today'], scenario=['extend'], res_dir='Data/lithuania/klaipeda/output/')
+    all_cases = plot_aggregated_data(borough='cankaya', observable=['susceptible', 'exposed', 'infectious', 'recovered', 'dead'], scenario=['extend'], res_dir='Data/turkey/cankaya/output/')
+    all_hospitalisations = plot_aggregated_data(borough='cankaya', observable=['num hospitalisations today', 'hospital bed occupancy', 'cum num hospitalisations today'], scenario=['extend'], res_dir='Data/turkey/cankaya/output/')
 
     spread = plot_spread(fname='Data/turkey/cankaya/output/covid_out_infections_0.csv', zoom=8.0, spread_time=spread_time)
 
