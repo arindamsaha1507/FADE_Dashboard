@@ -63,7 +63,6 @@ def lithuania():
 
 @app.route('/turkey', methods=['GET', 'POST'])
 def turkey():
-
     msg1 = 'Enter the parameters to start simulation'
     spread_time = random.randint(0, 99)
     msg2 = 'Showing spread of infections on day ' + str(spread_time)
