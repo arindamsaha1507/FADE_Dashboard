@@ -5,6 +5,8 @@ import plotly.graph_objects as go
 import json
 import os
 import numpy as np
+import yaml
+from datetime import datetime, date, timedelta
 
 def plot_spread(fname, zoom, spread_time):
 
@@ -42,9 +44,28 @@ def plot_demo(fname, region):
     demographics = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return demographics
 
-def plot_measures(fname):
+def plot_measures_yml(fname):
+    with open(fname, 'r') as ff:
+        dd = yaml.safe_load(ff)
+    dates = list(dd.keys())
+    dates = [x for x in dates if x not in ['date_format', 'dd/mm/yyyy', 'keyworker_fraction']]
+    dates1 = [datetime.strptime(ii, "%d/%m/%Y").date() for ii in dates]
 
-    df = pd.read_csv(fname)
+    del (dd['keyworker_fraction'])
+    del (dd['dd/mm/yyyy'])
+    del (dd['date_format'])
+
+    cols = ['date', 'case_isolation', 'household_isolation', 'partial_closure', 'closure', 'work_from_home',
+            'mask_uptake', 'mask_uptake_shopping', 'social_distance', 'traffic_multiplier', 'track_trace_efficiency']
+    df = pd.DataFrame(columns=cols)
+    for i in range(len(dates)):
+        row = dd[dates[i]]
+        row['date'] = dates1[i]
+        df = df.append(row, ignore_index=True)
+    df = df.fillna('-')
+
+    df.sort_values(by='date', inplace=True)
+    df = df.reset_index(drop=True)
 
     for ii in range(len(df)):
         for kk in list(df.columns):
@@ -102,7 +123,6 @@ def count_sim_results(borough, scenario, res_dir):
     return len(borough_files)
 
 def compile_data(borough, observable, scenario, res_dir):
-
     file_list = os.listdir(res_dir)
     borough_files = [res_dir + x for x in file_list if borough in x.split('-') and scenario in x.split('-') and 'latest.csv' not in x.split('-')]
     df = [pd.read_csv(x) for x in borough_files]
