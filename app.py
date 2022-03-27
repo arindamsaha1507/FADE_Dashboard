@@ -6,6 +6,7 @@ import threading
 import random
 import time
 import os.path as osp
+import json
 
 app = Flask(__name__)
 
@@ -13,154 +14,93 @@ app = Flask(__name__)
 def home():
     return render_template('index.html', content='Test')
 
-@app.route('/lithuania', methods=['GET', 'POST'])
-def lithuania():
-    msg1 = 'Enter the parameters to start simulation'
-    spread_time = random.randint(0, 99)
-    msg2 = 'Showing spread of infections on day ' + str(spread_time)
+class district_class:
+    def __init__(self, defaultCountry, defaultDistrict):
+        self.country = defaultCountry
+        self.district = defaultDistrict
 
-    if request.method == 'POST':
+    def create_page(self):
+        msg1 = 'Enter the parameters to start simulation'
+        spread_time = random.randint(0, 99)
+        msg2 = 'Showing spread of infections on day ' + str(spread_time)
 
-        if request.form['but'] == 'but1':
-            for i in range(int(request.form.get('reps'))):
-                cmd = 'bash facs_script.sh klaipeda ' + request.form.get('sim_length') + ' ' + request.form.get('starting_infections') + ' ' + request.form.get('reps')
-                th = threading.Thread(target=simulate, args=(cmd,))
-                th.start()
-            msg1 = 'Simulation submitted!'
-        if request.form['but'] == 'but2':
-            spread_time = int(request.form.get('spread_time'))
-            msg2 = 'Showing spread of infections on day ' + request.form.get('spread_time')
+        if request.method == 'POST':
 
-    region_map, demographics, measures, latest_cases, latest_hospitalisations, cc = plot("lithuania", "klaipeda")
+            if request.form['but'] == 'but1':
+                for i in range(int(request.form.get('reps'))):
+                    cmd = 'bash facs_script.sh ' + district + ' ' + request.form.get('sim_length') + ' ' + request.form.get('starting_infections') + ' ' + request.form.get('reps')
+                    th = threading.Thread(target=simulate, args=(cmd,))
+                    th.start()
+                msg1 = 'Simulation submitted!'
+            if request.form['but'] == 'but2':
+                spread_time = int(request.form.get('spread_time'))
+                msg2 = 'Showing spread of infections on day ' + request.form.get('spread_time')
 
-    msg3 = f'Showing plots for {cc} runs'
+        region_map, demographics, measures, latest_cases, latest_hospitalisations, cc = self.plot()
 
-    all_cases = plot_aggregated_data(borough='klaipeda', observable=['susceptible', 'exposed', 'infectious', 'recovered', 'dead'], scenario=['extend'], res_dir='Data/lithuania/klaipeda/output/')
-    all_hospitalisations = plot_aggregated_data(borough='klaipeda', observable=['num hospitalisations today', 'hospital bed occupancy', 'cum num hospitalisations today'], scenario=['extend'], res_dir='Data/lithuania/klaipeda/output/')
+        msg3 = f'Showing plots for {cc} runs'
 
-    spread = plot_spread(fname='Data/lithuania/klaipeda/output/covid_out_infections_0.csv', zoom=8.0, spread_time=spread_time)
+        output_path = osp.join("Data",self.country,self.district,"output/")
+        all_cases = plot_aggregated_data(borough=self.district, observable=['susceptible', 'exposed', 'infectious', 'recovered', 'dead'], scenario=['extend'], res_dir=output_path)
+        all_hospitalisations = plot_aggregated_data(borough=self.district, observable=['num hospitalisations today', 'hospital bed occupancy', 'cum num hospitalisations today'], scenario=['extend'], res_dir=output_path)
 
-    return render_template('country.html', 
-    message1=msg1, 
-    message2=msg2, 
-    message3=msg3,
-    country='Lithuania', 
-    region='Klaipeda', 
-    maps=region_map, 
-    demo=demographics, 
-    measures=measures, 
-    latest_cases=latest_cases,
-    latest_hospitalisations=latest_hospitalisations, 
-    all_cases=all_cases, 
-    all_hospitalisations=all_hospitalisations,
-    spread=spread)
+        spread_path = osp.join("Data",self.country,self.district,"output","covid_out_infections_0.csv")
+        spread = plot_spread(fname=spread_path, zoom=8.0, spread_time=spread_time)
 
-@app.route('/cankaya', methods=['GET', 'POST'])
-def cankaya():
-    msg1 = 'Enter the parameters to start simulation'
-    spread_time = random.randint(0, 99)
-    msg2 = 'Showing spread of infections on day ' + str(spread_time)
+        return render_template('country.html',
+        message1=msg1,
+        message2=msg2,
+        message3=msg3,
+        country=self.country,
+        region=self.district,
+        maps=region_map,
+        demo=demographics,
+        measures=measures,
+        latest_cases=latest_cases,
+        latest_hospitalisations=latest_hospitalisations,
+        all_cases=all_cases,
+        all_hospitalisations=all_hospitalisations,
+        spread=spread)
 
-    if request.method == 'POST':
+    def plot(self):
+        region_path = osp.join("Data", self.country, self.district, "input", self.district + "_buildings.csv")
+        demographics_path = osp.join("Data", self.country, self.district, "input", "age-distr.csv")
+        measures_path = osp.join("Data", self.country, self.district, "input", "measures_" + self.country + ".yml")
+        latest_cases_path = osp.join("Data", self.country,self. district, "output",self.district + "-latest.csv")
+        latest_hospitalisations_path = osp.join("Data", self.country, self.district, "output", self.district + "-latest.csv")
+        cc_path = osp.join("Data", self.country, self.district, "output")
 
-        if request.form['but'] == 'but1':
-            for i in range(int(request.form.get('reps'))):
-                cmd = 'bash facs_script.sh cankaya ' + request.form.get('sim_length') + ' ' + request.form.get('starting_infections') + ' ' + request.form.get('reps')
-                th = threading.Thread(target=simulate, args=(cmd,))
-                th.start()
-            msg1 = 'Simulation submitted!'
-        if request.form['but'] == 'but2':
-            spread_time = int(request.form.get('spread_time'))
-            msg2 = 'Showing spread of infections on day ' + request.form.get('spread_time')
+        region_map = plot_map(fname=region_path, zoom=8.0)
+        demographics = plot_demo(fname=demographics_path, region=self.district.capitalize())
+        measures = plot_measures_yml(fname=measures_path)
 
-    region_map, demographics, measures, latest_cases, latest_hospitalisations, cc = plot("turkey", "cankaya")
+        latest_cases = plot_results_overall(filename=latest_cases_path)
+        latest_hospitalisations = plot_results_hospitals(filename=latest_hospitalisations_path)
+        cc = count_sim_results(borough=self.district, scenario='extend', res_dir=cc_path)
 
-    msg3 = f'Showing plots for {cc} runs'
+        return region_map, demographics, measures, latest_cases, latest_hospitalisations, cc
 
-    all_cases = plot_aggregated_data(borough='cankaya', observable=['susceptible', 'exposed', 'infectious', 'recovered', 'dead'], scenario=['extend'], res_dir='Data/turkey/cankaya/output/')
-    all_hospitalisations = plot_aggregated_data(borough='cankaya', observable=['num hospitalisations today', 'hospital bed occupancy', 'cum num hospitalisations today'], scenario=['extend'], res_dir='Data/turkey/cankaya/output/')
+    def set_region(self, country, district):
+        self.country = country
+        self.district = district
 
-    spread = plot_spread(fname='Data/turkey/cankaya/output/covid_out_infections_0.csv', zoom=8.0, spread_time=spread_time)
-
-    return render_template('country.html',
-    message1=msg1,
-    message2=msg2,
-    message3=msg3,
-    country='Turkey',
-    region='Cankaya',
-    maps=region_map,
-    demo=demographics,
-    measures=measures,
-    latest_cases=latest_cases,
-    latest_hospitalisations=latest_hospitalisations,
-    all_cases=all_cases,
-    all_hospitalisations=all_hospitalisations,
-    spread=spread)
-
-@app.route('/sultanbeyli', methods=['GET', 'POST'])
-def sultanbeyli():
-    msg1 = 'Enter the parameters to start simulation'
-    spread_time = random.randint(0, 99)
-    msg2 = 'Showing spread of infections on day ' + str(spread_time)
-
-    if request.method == 'POST':
-
-        if request.form['but'] == 'but1':
-            for i in range(int(request.form.get('reps'))):
-                cmd = 'bash facs_script.sh sultanbeyli ' + request.form.get('sim_length') + ' ' + request.form.get('starting_infections') + ' ' + request.form.get('reps')
-                th = threading.Thread(target=simulate, args=(cmd,))
-                th.start()
-            msg1 = 'Simulation submitted!'
-        if request.form['but'] == 'but2':
-            spread_time = int(request.form.get('spread_time'))
-            msg2 = 'Showing spread of infections on day ' + request.form.get('spread_time')
-
-    region_map, demographics, measures, latest_cases, latest_hospitalisations, cc = plot("turkey", "sultanbeyli")
-
-    msg3 = f'Showing plots for {cc} runs'
-
-    all_cases = plot_aggregated_data(borough='sultanbeyli', observable=['susceptible', 'exposed', 'infectious', 'recovered', 'dead'], scenario=['extend'], res_dir='Data/turkey/sultanbeyli/output/')
-    all_hospitalisations = plot_aggregated_data(borough='sultanbeyli', observable=['num hospitalisations today', 'hospital bed occupancy', 'cum num hospitalisations today'], scenario=['extend'], res_dir='Data/turkey/sultanbeyli/output/')
-
-    spread = plot_spread(fname='Data/turkey/sultanbeyli/output/covid_out_infections_0.csv', zoom=8.0, spread_time=spread_time)
-
-    return render_template('country.html',
-    message1=msg1,
-    message2=msg2,
-    message3=msg3,
-    country='Turkey',
-    region='sultanbeyli',
-    maps=region_map,
-    demo=demographics,
-    measures=measures,
-    latest_cases=latest_cases,
-    latest_hospitalisations=latest_hospitalisations,
-    all_cases=all_cases,
-    all_hospitalisations=all_hospitalisations,
-    spread=spread)
 
 @app.route('/about')
 def about():
     return render_template('about.html', content='Test')
 
+@app.route('/create_page', methods=['GET', 'POST'])
+def load_page():
+    result=page.create_page()
+    return result
 
-def plot(country, district):
-    region_path = osp.join("Data",country,district,"input",district+"_buildings.csv")
-    demographics_path = osp.join("Data",country,district,"input","age-distr.csv")
-    measures_path = osp.join("Data",country,district,"input","measures_"+country+".yml")
-    latest_cases_path = osp.join("Data",country,district,"output",district+"-latest.csv")
-    latest_hospitalisations_path = osp.join("Data",country,district,"output",district+"-latest.csv")
-    cc_path = osp.join("Data",country,district,"output")
-
-    region_map = plot_map(fname=region_path, zoom=8.0)
-    demographics = plot_demo(fname=demographics_path, region=district.capitalize())
-    measures = plot_measures_yml(fname=measures_path)
-
-    latest_cases = plot_results_overall(filename=latest_cases_path)
-    latest_hospitalisations = plot_results_hospitals(filename=latest_hospitalisations_path)
-    cc = count_sim_results(borough=district, scenario='extend', res_dir=cc_path)
-
-    return region_map, demographics, measures, latest_cases, latest_hospitalisations, cc
+@app.route('/set_region', methods=['POST'])
+def set_region():
+    output = request.get_json()
+    result = json.loads(output) #this converts the json output to a python dictionary
+    page.set_region(result['country'], result['district'])
+    return "ok"
 
 if __name__ == '__main__':
+    page = district_class("lithuania","klaipeda")
     app.run(port=5000)

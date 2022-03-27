@@ -11,6 +11,21 @@
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/dropdown.css') }}">
 
     <title>{% block title %}Hello, world!{% endblock %}</title>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+  <script>
+      function referPage(country, district) {
+          const location = {country, district};
+          const string_location = JSON.stringify(location);
+          console.log(string_location)
+          $.ajax({
+            url:"/set_region",
+            type:"POST",
+            contentType: "application/json",
+            data: JSON.stringify(string_location)});
+          window.location.href  = "/create_page";
+      }
+  </script>
   </head>
   <body>
 
@@ -25,15 +40,17 @@
               <li class="nav-item">
                 <a class="nav-link active" aria-current="page" href="/">Home</a>
               </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/lithuania">Lithuania</a>
-              </li>
-
+              <div class="dropdown">
+                <a class="nav-link">Lithuania</a>
+                <div class="dropdown-content">
+                  <a onClick="referPage('lithuania','klaipeda')">Klaipeda</a>
+                </div>
+              </div>
               <div class="dropdown">
                 <a class="nav-link">Turkey</a>
                 <div class="dropdown-content">
-                  <a href="/cankaya">Cankaya</a>
-                  <a href="/sultanbeyli">Sultanbeyli</a>
+                  <a onClick="referPage('turkey', 'cankaya')">Cankaya</a>
+                  <a onClick="referPage('turkey', 'sultanbeyli')">Sultanbeyli</a>
                 </div>
               </div>
 
