@@ -36,7 +36,7 @@ def plot_map(fname, zoom):
 def plot_demo(fname, region):
 
     age_dist_df = pd.read_csv(fname)
-    fig = px.bargit(age_dist_df[region], labels={
+    fig = px.bar(age_dist_df[region], labels={
                      "index": "Age",
                      "value": "Population",
                  },)

@@ -65,7 +65,7 @@ class district_class:
     def plot(self):
         region_path = osp.join("Data", self.country, self.district, "input", self.district + "_buildings.csv")
         demographics_path = osp.join("Data", self.country, self.district, "input", "age-distr.csv")
-        measures_path = osp.join("Data", self.country, self.district, "input", "measures_" + self.country + ".yml")
+        measures_path = osp.join("Data", self.country, self.district, "input", "measures_" + self.district + ".yml")
         latest_cases_path = osp.join("Data", self.country,self. district, "output",self.district + "-latest.csv")
         latest_hospitalisations_path = osp.join("Data", self.country, self.district, "output", self.district + "-latest.csv")
         cc_path = osp.join("Data", self.country, self.district, "output")
