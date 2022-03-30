@@ -28,7 +28,7 @@ class district_class:
 
             if request.form['but'] == 'but1':
                 for i in range(int(request.form.get('reps'))):
-                    cmd = 'bash facs_script.sh ' + district + ' ' + request.form.get('sim_length') + ' ' + request.form.get('starting_infections') + ' ' + request.form.get('reps')
+                    cmd = 'bash facs_script.sh ' + self.district + ' ' + request.form.get('sim_length') + ' ' + request.form.get('starting_infections') + ' ' + request.form.get('reps')
                     th = threading.Thread(target=simulate, args=(cmd,))
                     th.start()
                 msg1 = 'Simulation submitted!'
