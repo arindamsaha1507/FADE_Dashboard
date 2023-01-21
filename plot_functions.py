@@ -89,7 +89,8 @@ def plot_measures_yml(fname):
 def plot_results_overall(filename):
 
     df = pd.read_csv(filename)
-    df = df.drop('Unnamed: 0', axis=1)
+    if 'Unnamed: 0' in df.columns:
+        df = df.drop('Unnamed: 0', axis=1)
     df = df.rename(columns={'#time': 'time'})
     df = df.set_index('time')
     
@@ -104,7 +105,8 @@ def plot_results_overall(filename):
 def plot_results_hospitals(filename):
 
     df = pd.read_csv(filename)
-    df = df.drop('Unnamed: 0', axis=1)
+    if 'Unnamed: 0' in df.columns:
+        df = df.drop('Unnamed: 0', axis=1)
     df = df.rename(columns={'#time': 'time'})
     df = df.set_index('time')
     
@@ -124,7 +126,7 @@ def count_sim_results(borough, scenario, res_dir):
 
 def compile_data(borough, observable, scenario, res_dir):
     file_list = os.listdir(res_dir)
-    borough_files = [res_dir + x for x in file_list if borough in x.split('-') and scenario in x.split('-') and 'latest.csv' not in x.split('-')]
+    borough_files = [res_dir + x for x in file_list if borough in x.split('-') and 'latest.csv' not in x.split('-')]
     df = [pd.read_csv(x) for x in borough_files]
     ll = list((x[observable] for x in df))
     for i in range(len(ll)):
